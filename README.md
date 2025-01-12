@@ -1,6 +1,6 @@
 # Supabase Database Schema Extractor
 
-A Python script to extract and document the complete schema of a Supabase database, including tables, foreign keys, functions, triggers, enumerated types, and indexes.
+A Python script that extracts your Supabase database schema and exports it as a `structured JSON document`. The output includes comprehensive documentation of tables, foreign keys, functions, triggers, enumerated types, and indexes, making it easy to understand and share your database structure.
 
 ## Setup
 
