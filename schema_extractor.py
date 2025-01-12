@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env.local
-load_dotenv('.env.local')
+load_dotenv('.env')
 
 # Get database credentials from environment variables
 db_password = quote_plus(os.getenv('DB_PASSWORD'))
