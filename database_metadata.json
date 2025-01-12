@@ -1,0 +1,1277 @@
+{
+    "tables": [
+        {
+            "table_name": "users",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": true,
+                    "check_constraints": []
+                },
+                {
+                    "name": "is_subscribed",
+                    "type": "BOOLEAN",
+                    "is_nullable": true,
+                    "default": "false",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "subscription_tier",
+                    "type": "VARCHAR(4)",
+                    "is_nullable": true,
+                    "default": "'free'::subscription_tier_type",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "billing_interval",
+                    "type": "VARCHAR(10)",
+                    "is_nullable": true,
+                    "default": "'month'::character varying",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK (((billing_interval)::text = 'month'::text))"
+                    ]
+                },
+                {
+                    "name": "current_period_end",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "credits_remaining",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "0",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK ((credits_remaining >= 0))"
+                    ]
+                },
+                {
+                    "name": "message_count",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "0",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK ((message_count >= 0))"
+                    ]
+                },
+                {
+                    "name": "last_message_reset",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "last_credit_renewal_date",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "awaiting_subscription",
+                    "type": "BOOLEAN",
+                    "is_nullable": true,
+                    "default": "false",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "subscription_context",
+                    "type": "VARCHAR(50)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "stripe_customer_id",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "messages",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "sequence_number",
+                    "type": "BIGINT",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": true,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": true,
+                    "check_constraints": []
+                },
+                {
+                    "name": "role",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK (((role)::text = ANY ((ARRAY['user'::character varying, 'assistant'::character varying])::text[])))"
+                    ]
+                },
+                {
+                    "name": "content",
+                    "type": "TEXT",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "tokens_used",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "image_analysis",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "image_url",
+                    "type": "TEXT",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "analysis_result",
+                    "type": "JSONB",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "excel_data",
+                    "type": "JSONB",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "error",
+                    "type": "TEXT",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "status",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": true,
+                    "default": "'pending'::character varying",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'processing'::character varying, 'completed'::character varying, 'failed'::character varying])::text[])))"
+                    ]
+                },
+                {
+                    "name": "tokens_used",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "credits_used",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "1",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "completed_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "credits_transactions",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "transaction_type",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK (((transaction_type)::text = ANY ((ARRAY['purchase'::character varying, 'usage'::character varying, 'monthly_grant'::character varying, 'promotion'::character varying])::text[])))"
+                    ]
+                },
+                {
+                    "name": "amount",
+                    "type": "INTEGER",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "credits_before",
+                    "type": "INTEGER",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK ((credits_before >= 0))"
+                    ]
+                },
+                {
+                    "name": "credits_after",
+                    "type": "INTEGER",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": [
+                        "CHECK ((credits_after >= 0))"
+                    ]
+                },
+                {
+                    "name": "stripe_payment_id",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "is_promotion",
+                    "type": "BOOLEAN",
+                    "is_nullable": true,
+                    "default": "false",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "description",
+                    "type": "TEXT",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "subscription_logs",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "event_type",
+                    "type": "VARCHAR(50)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "old_tier",
+                    "type": "VARCHAR(4)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "new_tier",
+                    "type": "VARCHAR(4)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "is_subscribed",
+                    "type": "BOOLEAN",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "billing_interval",
+                    "type": "VARCHAR(10)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "current_period_end",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "stripe_event_id",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "error_logs",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "error_type",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "error_message",
+                    "type": "TEXT",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "function_name",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "metadata",
+                    "type": "JSONB",
+                    "is_nullable": true,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "locks",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "resource_type",
+                    "type": "VARCHAR(50)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": true,
+                    "check_constraints": []
+                },
+                {
+                    "name": "resource_id",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": true,
+                    "check_constraints": []
+                },
+                {
+                    "name": "owner",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "expires_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        },
+        {
+            "table_name": "usage_metrics",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "UUID",
+                    "is_nullable": false,
+                    "default": "uuid_generate_v4()",
+                    "is_primary_key": true,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "phone_number",
+                    "type": "VARCHAR(20)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "month_year",
+                    "type": "VARCHAR(7)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "total_messages",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "0",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "total_images",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "0",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "total_tokens",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "0",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "total_credits_used",
+                    "type": "INTEGER",
+                    "is_nullable": true,
+                    "default": "0",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "total_cost",
+                    "type": "NUMERIC(10, 2)",
+                    "is_nullable": true,
+                    "default": "0.00",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "created_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                },
+                {
+                    "name": "updated_at",
+                    "type": "TIMESTAMP",
+                    "is_nullable": true,
+                    "default": "now()",
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": []
+                }
+            ]
+        }
+    ],
+    "foreign_keys": [
+        {
+            "table": "messages",
+            "constrained_columns": [
+                "phone_number"
+            ],
+            "referred_table": "users",
+            "referred_columns": [
+                "phone_number"
+            ]
+        },
+        {
+            "table": "image_analysis",
+            "constrained_columns": [
+                "phone_number"
+            ],
+            "referred_table": "users",
+            "referred_columns": [
+                "phone_number"
+            ]
+        },
+        {
+            "table": "credits_transactions",
+            "constrained_columns": [
+                "phone_number"
+            ],
+            "referred_table": "users",
+            "referred_columns": [
+                "phone_number"
+            ]
+        },
+        {
+            "table": "subscription_logs",
+            "constrained_columns": [
+                "phone_number"
+            ],
+            "referred_table": "users",
+            "referred_columns": [
+                "phone_number"
+            ]
+        },
+        {
+            "table": "error_logs",
+            "constrained_columns": [
+                "phone_number"
+            ],
+            "referred_table": "users",
+            "referred_columns": [
+                "phone_number"
+            ]
+        },
+        {
+            "table": "usage_metrics",
+            "constrained_columns": [
+                "phone_number"
+            ],
+            "referred_table": "users",
+            "referred_columns": [
+                "phone_number"
+            ]
+        }
+    ],
+    "functions": [
+        {
+            "function_name": "check_message_limit",
+            "schema": "public",
+            "arguments": "p_phone_number character varying",
+            "return_type": "boolean",
+            "definition": "CREATE OR REPLACE FUNCTION public.check_message_limit(p_phone_number character varying)\n RETURNS boolean\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_user_record RECORD;\r\nBEGIN\r\n    -- Get user details\r\n    SELECT subscription_tier, message_count\r\n    INTO v_user_record\r\n    FROM users\r\n    WHERE phone_number = p_phone_number;\r\n\r\n    -- Let the application handle the limit\r\n    RETURN true;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "cleanup_expired_locks",
+            "schema": "public",
+            "arguments": "",
+            "return_type": null,
+            "definition": "CREATE OR REPLACE PROCEDURE public.cleanup_expired_locks()\n LANGUAGE plpgsql\nAS $procedure$\r\nBEGIN\r\n    DELETE FROM locks WHERE expires_at < NOW();\r\nEND;\r\n$procedure$\n"
+        },
+        {
+            "function_name": "find_or_create_user",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_initial_credits integer",
+            "return_type": "TABLE(id uuid, phone_number character varying, is_subscribed boolean, subscription_tier character varying, billing_interval character varying, current_period_end timestamp with time zone, credits_remaining integer, message_count integer, last_message_reset timestamp with time zone, awaiting_subscription boolean, subscription_context character varying, stripe_customer_id character varying, created_at timestamp with time zone, updated_at timestamp with time zone)",
+            "definition": "CREATE OR REPLACE FUNCTION public.find_or_create_user(p_phone_number character varying, p_initial_credits integer)\n RETURNS TABLE(id uuid, phone_number character varying, is_subscribed boolean, subscription_tier character varying, billing_interval character varying, current_period_end timestamp with time zone, credits_remaining integer, message_count integer, last_message_reset timestamp with time zone, awaiting_subscription boolean, subscription_context character varying, stripe_customer_id character varying, created_at timestamp with time zone, updated_at timestamp with time zone)\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_user_exists BOOLEAN;\r\n    v_user_record users%ROWTYPE;\r\nBEGIN\r\n    -- Validate initial credits\r\n    IF p_initial_credits IS NULL OR p_initial_credits < 0 THEN\r\n        RAISE EXCEPTION 'Initial credits must be a non-negative number';\r\n    END IF;\r\n\r\n    -- Check if user exists\r\n    SELECT EXISTS (\r\n        SELECT 1 FROM users u WHERE u.phone_number = p_phone_number\r\n    ) INTO v_user_exists;\r\n\r\n    -- Create user if they don't exist\r\n    IF NOT v_user_exists THEN\r\n        -- Create user with initial credits\r\n        INSERT INTO users (phone_number, credits_remaining)\r\n        VALUES (p_phone_number, p_initial_credits)\r\n        RETURNING * INTO v_user_record;\r\n\r\n        -- Record the initial credits transaction\r\n        INSERT INTO credits_transactions (\r\n            phone_number,\r\n            transaction_type,\r\n            amount,\r\n            credits_before,\r\n            credits_after,\r\n            is_promotion,\r\n            description\r\n        ) VALUES (\r\n            p_phone_number,\r\n            'promotion',\r\n            p_initial_credits,\r\n            0,\r\n            p_initial_credits,\r\n            true,\r\n            'Initial free credits'\r\n        );\r\n    ELSE\r\n        SELECT * INTO v_user_record\r\n        FROM users u\r\n        WHERE u.phone_number = p_phone_number;\r\n    END IF;\r\n\r\n    -- Return user data\r\n    RETURN QUERY\r\n    SELECT \r\n        v_user_record.id,\r\n        v_user_record.phone_number,\r\n        v_user_record.is_subscribed,\r\n        v_user_record.subscription_tier::VARCHAR(10),\r\n        v_user_record.billing_interval,\r\n        v_user_record.current_period_end,\r\n        v_user_record.credits_remaining,\r\n        v_user_record.message_count,\r\n        v_user_record.last_message_reset,\r\n        v_user_record.awaiting_subscription,\r\n        v_user_record.subscription_context,\r\n        v_user_record.stripe_customer_id,\r\n        v_user_record.created_at,\r\n        v_user_record.updated_at;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "get_monthly_usage_costs",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_month_year character varying DEFAULT NULL::character varying",
+            "return_type": "TABLE(month_year character varying, total_cost numeric, total_messages integer, total_images integer, total_tokens integer, total_credits_used integer)",
+            "definition": "CREATE OR REPLACE FUNCTION public.get_monthly_usage_costs(p_phone_number character varying, p_month_year character varying DEFAULT NULL::character varying)\n RETURNS TABLE(month_year character varying, total_cost numeric, total_messages integer, total_images integer, total_tokens integer, total_credits_used integer)\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    RETURN QUERY\r\n    SELECT \r\n        um.month_year,\r\n        um.total_cost,\r\n        um.total_messages,\r\n        um.total_images,\r\n        um.total_tokens,\r\n        um.total_credits_used\r\n    FROM usage_metrics um\r\n    WHERE um.phone_number = p_phone_number\r\n    AND (p_month_year IS NULL OR um.month_year = p_month_year)\r\n    ORDER BY um.month_year DESC;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "get_subscription_info",
+            "schema": "public",
+            "arguments": "p_phone_number character varying",
+            "return_type": "TABLE(tier subscription_tier_type, is_active boolean, credits integer, message_count integer, current_period_end timestamp with time zone)",
+            "definition": "CREATE OR REPLACE FUNCTION public.get_subscription_info(p_phone_number character varying)\n RETURNS TABLE(tier subscription_tier_type, is_active boolean, credits integer, message_count integer, current_period_end timestamp with time zone)\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    RETURN QUERY\r\n    SELECT \r\n        u.subscription_tier,\r\n        u.is_subscribed,\r\n        u.credits_remaining,\r\n        u.message_count,\r\n        u.current_period_end\r\n    FROM users u\r\n    WHERE u.phone_number = p_phone_number;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "handle_credit_transaction",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_transaction_type character varying, p_amount integer, p_stripe_payment_id character varying DEFAULT NULL::character varying, p_is_promotion boolean DEFAULT false, p_description text DEFAULT NULL::text, p_initial_credits integer DEFAULT 0",
+            "return_type": "void",
+            "definition": "CREATE OR REPLACE FUNCTION public.handle_credit_transaction(p_phone_number character varying, p_transaction_type character varying, p_amount integer, p_stripe_payment_id character varying DEFAULT NULL::character varying, p_is_promotion boolean DEFAULT false, p_description text DEFAULT NULL::text, p_initial_credits integer DEFAULT 0)\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_credits_before INTEGER;\r\n    v_credits_after INTEGER;\r\n    v_user_exists BOOLEAN;\r\nBEGIN\r\n    -- Check if user exists\r\n    SELECT EXISTS (\r\n        SELECT 1 FROM users WHERE users.phone_number = p_phone_number\r\n    ) INTO v_user_exists;\r\n\r\n    -- Create user if they don't exist\r\n    IF NOT v_user_exists THEN\r\n        INSERT INTO users (phone_number, credits_remaining)\r\n        VALUES (p_phone_number, p_initial_credits);\r\n        v_credits_before := p_initial_credits;\r\n    ELSE\r\n        -- Get current credits\r\n        SELECT credits_remaining INTO v_credits_before\r\n        FROM users\r\n        WHERE users.phone_number = p_phone_number;\r\n    END IF;\r\n\r\n    -- Calculate new credit balance\r\n    v_credits_after := v_credits_before;\r\n    IF p_transaction_type IN ('purchase', 'monthly_grant', 'promotion') THEN\r\n        v_credits_after := v_credits_after + p_amount;\r\n    ELSIF p_transaction_type = 'usage' THEN\r\n        v_credits_after := v_credits_after - p_amount;\r\n    END IF;\r\n\r\n    -- Update user's credits\r\n    UPDATE users\r\n    SET \r\n        credits_remaining = v_credits_after\r\n    WHERE users.phone_number = p_phone_number;\r\n\r\n    -- Record transaction\r\n    INSERT INTO credits_transactions (\r\n        phone_number,\r\n        transaction_type,\r\n        amount,\r\n        credits_before,\r\n        credits_after,\r\n        stripe_payment_id,\r\n        is_promotion,\r\n        description\r\n    ) VALUES (\r\n        p_phone_number,\r\n        p_transaction_type,\r\n        p_amount,\r\n        v_credits_before,\r\n        v_credits_after,\r\n        p_stripe_payment_id,\r\n        p_is_promotion,\r\n        p_description\r\n    );\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "handle_monthly_pro_credits",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_credit_amount integer",
+            "return_type": "void",
+            "definition": "CREATE OR REPLACE FUNCTION public.handle_monthly_pro_credits(p_phone_number character varying, p_credit_amount integer)\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_last_renewal TIMESTAMPTZ;\r\n    v_current_period_end TIMESTAMPTZ;\r\nBEGIN\r\n    -- Validate credit amount\r\n    IF p_credit_amount IS NULL OR p_credit_amount <= 0 THEN\r\n        RAISE EXCEPTION 'Credit amount must be a positive number';\r\n    END IF;\r\n\r\n    -- Get user details\r\n    SELECT last_credit_renewal_date, current_period_end\r\n    INTO v_last_renewal, v_current_period_end\r\n    FROM users \r\n    WHERE phone_number = p_phone_number \r\n    AND is_subscribed = true \r\n    AND subscription_tier = 'pro';\r\n\r\n    -- Proceed if user is pro and either:\r\n    -- 1. Has never received credits (v_last_renewal IS NULL) or\r\n    -- 2. Last renewal was in a previous billing period\r\n    IF (v_last_renewal IS NULL OR \r\n        (v_current_period_end IS NOT NULL AND v_last_renewal < v_current_period_end - INTERVAL '1 month')) THEN\r\n        -- Add monthly credits\r\n        PERFORM handle_credit_transaction(\r\n            p_phone_number,\r\n            'monthly_grant',\r\n            p_credit_amount,\r\n            NULL,\r\n            true,\r\n            'Monthly Pro credits'\r\n        );\r\n\r\n        -- Update last renewal date\r\n        UPDATE users \r\n        SET last_credit_renewal_date = NOW()\r\n        WHERE phone_number = p_phone_number;\r\n    END IF;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "handle_subscription_update",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_is_subscribed boolean, p_tier subscription_tier_type DEFAULT 'free'::subscription_tier_type, p_current_period_end timestamp with time zone DEFAULT NULL::timestamp with time zone",
+            "return_type": "boolean",
+            "definition": "CREATE OR REPLACE FUNCTION public.handle_subscription_update(p_phone_number character varying, p_is_subscribed boolean, p_tier subscription_tier_type DEFAULT 'free'::subscription_tier_type, p_current_period_end timestamp with time zone DEFAULT NULL::timestamp with time zone)\n RETURNS boolean\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    -- Update user subscription details\r\n    UPDATE users\r\n    SET \r\n        is_subscribed = p_is_subscribed,\r\n        subscription_tier = p_tier,\r\n        current_period_end = p_current_period_end,\r\n        updated_at = NOW()\r\n    WHERE phone_number = p_phone_number;\r\n\r\n    -- Log the subscription change\r\n    INSERT INTO subscription_logs (\r\n        phone_number,\r\n        event_type,\r\n        old_tier,\r\n        new_tier,\r\n        is_subscribed,\r\n        billing_interval,\r\n        current_period_end\r\n    )\r\n    VALUES (\r\n        p_phone_number,\r\n        'subscription_update',\r\n        (SELECT subscription_tier FROM users WHERE phone_number = p_phone_number),\r\n        p_tier,\r\n        p_is_subscribed,\r\n        'month',\r\n        p_current_period_end\r\n    );\r\n\r\n    RETURN true;\r\nEXCEPTION\r\n    WHEN OTHERS THEN\r\n        -- Log error\r\n        INSERT INTO error_logs (\r\n            error_type,\r\n            error_message,\r\n            function_name,\r\n            phone_number\r\n        ) VALUES (\r\n            'subscription_update_error',\r\n            SQLERRM,\r\n            'handle_subscription_update',\r\n            p_phone_number\r\n        );\r\n        RETURN false;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "increment_message_count",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_count integer DEFAULT 1",
+            "return_type": "void",
+            "definition": "CREATE OR REPLACE FUNCTION public.increment_message_count(p_phone_number character varying, p_count integer DEFAULT 1)\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    UPDATE users\r\n    SET message_count = message_count + p_count\r\n    WHERE phone_number = p_phone_number;\r\n\r\n    -- Update usage metrics\r\n    PERFORM update_usage_metrics(\r\n        p_phone_number := p_phone_number,\r\n        p_messages := p_count\r\n    );\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "maintain_message_sequence",
+            "schema": "public",
+            "arguments": "",
+            "return_type": "trigger",
+            "definition": "CREATE OR REPLACE FUNCTION public.maintain_message_sequence()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    -- If no sequence_number is provided, get the next one for this phone number\r\n    IF NEW.sequence_number IS NULL THEN\r\n        SELECT COALESCE(MAX(sequence_number), 0) + 1\r\n        INTO NEW.sequence_number\r\n        FROM messages\r\n        WHERE phone_number = NEW.phone_number;\r\n    END IF;\r\n    RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "save_message_with_sequence",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_content text, p_role character varying, p_increment_count boolean DEFAULT true",
+            "return_type": "void",
+            "definition": "CREATE OR REPLACE FUNCTION public.save_message_with_sequence(p_phone_number character varying, p_content text, p_role character varying, p_increment_count boolean DEFAULT true)\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_last_sequence BIGINT;\r\nBEGIN\r\n    -- Get the last sequence number for this phone number\r\n    SELECT COALESCE(MAX(sequence_number), 0)\r\n    INTO v_last_sequence\r\n    FROM messages\r\n    WHERE phone_number = p_phone_number;\r\n\r\n    -- Insert the message with next sequence number\r\n    INSERT INTO messages (phone_number, content, role, sequence_number)\r\n    VALUES (p_phone_number, p_content, p_role, v_last_sequence + 1);\r\n\r\n    -- Increment message count if requested\r\n    IF p_increment_count THEN\r\n        UPDATE users\r\n        SET message_count = COALESCE(message_count, 0) + 1,\r\n            updated_at = NOW()\r\n        WHERE phone_number = p_phone_number;\r\n    END IF;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "save_messages_batch",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_user_message text, p_ai_response text, p_tokens_used integer DEFAULT NULL::integer, p_skip_increment boolean DEFAULT false",
+            "return_type": "void",
+            "definition": "CREATE OR REPLACE FUNCTION public.save_messages_batch(p_phone_number character varying, p_user_message text, p_ai_response text, p_tokens_used integer DEFAULT NULL::integer, p_skip_increment boolean DEFAULT false)\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_last_sequence BIGINT;\r\nBEGIN\r\n    -- Get the last sequence number for this phone number\r\n    SELECT COALESCE(MAX(sequence_number), 0)\r\n    INTO v_last_sequence\r\n    FROM messages\r\n    WHERE phone_number = p_phone_number;\r\n\r\n    -- Save user message with next sequence number\r\n    INSERT INTO messages (phone_number, role, content, tokens_used, sequence_number)\r\n    VALUES (p_phone_number, 'user', p_user_message, \r\n        CASE WHEN p_tokens_used IS NOT NULL THEN p_tokens_used/2 ELSE NULL END,\r\n        v_last_sequence + 1);\r\n\r\n    -- Save AI response with next sequence number\r\n    INSERT INTO messages (phone_number, role, content, tokens_used, sequence_number)\r\n    VALUES (p_phone_number, 'assistant', p_ai_response, \r\n        CASE WHEN p_tokens_used IS NOT NULL THEN p_tokens_used/2 ELSE NULL END,\r\n        v_last_sequence + 2);\r\n\r\n    -- Increment message count if not skipped\r\n    IF NOT p_skip_increment THEN\r\n        PERFORM increment_message_count(p_phone_number);\r\n    END IF;\r\n\r\n    -- Update usage metrics if tokens were used\r\n    IF p_tokens_used IS NOT NULL THEN\r\n        PERFORM update_usage_metrics(\r\n            p_phone_number := p_phone_number,\r\n            p_messages := 1,\r\n            p_tokens := p_tokens_used\r\n        );\r\n    END IF;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "update_updated_at_column",
+            "schema": "public",
+            "arguments": "",
+            "return_type": "trigger",
+            "definition": "CREATE OR REPLACE FUNCTION public.update_updated_at_column()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    NEW.updated_at = NOW();\r\n    RETURN NEW;\r\nEND;\r\n$function$\n"
+        },
+        {
+            "function_name": "update_usage_metrics",
+            "schema": "public",
+            "arguments": "p_phone_number character varying, p_messages integer DEFAULT 0, p_images integer DEFAULT 0, p_tokens integer DEFAULT 0, p_credits integer DEFAULT 0, p_cost numeric DEFAULT 0.00",
+            "return_type": "void",
+            "definition": "CREATE OR REPLACE FUNCTION public.update_usage_metrics(p_phone_number character varying, p_messages integer DEFAULT 0, p_images integer DEFAULT 0, p_tokens integer DEFAULT 0, p_credits integer DEFAULT 0, p_cost numeric DEFAULT 0.00)\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\r\nDECLARE\r\n    v_month_year VARCHAR;\r\nBEGIN\r\n    -- Get current month-year\r\n    v_month_year := TO_CHAR(NOW(), 'YYYY-MM');\r\n\r\n    -- Insert or update metrics\r\n    INSERT INTO usage_metrics (\r\n        phone_number,\r\n        month_year,\r\n        total_messages,\r\n        total_images,\r\n        total_tokens,\r\n        total_credits_used,\r\n        total_cost\r\n    )\r\n    VALUES (\r\n        p_phone_number,\r\n        v_month_year,\r\n        p_messages,\r\n        p_images,\r\n        p_tokens,\r\n        p_credits,\r\n        p_cost\r\n    )\r\n    ON CONFLICT (phone_number, month_year)\r\n    DO UPDATE SET\r\n        total_messages = usage_metrics.total_messages + p_messages,\r\n        total_images = usage_metrics.total_images + p_images,\r\n        total_tokens = usage_metrics.total_tokens + p_tokens,\r\n        total_credits_used = usage_metrics.total_credits_used + p_credits,\r\n        total_cost = usage_metrics.total_cost + p_cost,\r\n        updated_at = NOW();\r\nEND;\r\n$function$\n"
+        }
+    ],
+    "triggers": [
+        {
+            "trigger_name": "update_users_updated_at",
+            "table": "users",
+            "function": "update_updated_at_column",
+            "events": [
+                "BEFORE UPDATE"
+            ],
+            "orientation": "ROW",
+            "enabled": true
+        },
+        {
+            "trigger_name": "update_image_analysis_updated_at",
+            "table": "image_analysis",
+            "function": "update_updated_at_column",
+            "events": [
+                "BEFORE UPDATE"
+            ],
+            "orientation": "ROW",
+            "enabled": true
+        },
+        {
+            "trigger_name": "update_credits_transactions_updated_at",
+            "table": "credits_transactions",
+            "function": "update_updated_at_column",
+            "events": [
+                "BEFORE UPDATE"
+            ],
+            "orientation": "ROW",
+            "enabled": true
+        },
+        {
+            "trigger_name": "update_subscription_logs_updated_at",
+            "table": "subscription_logs",
+            "function": "update_updated_at_column",
+            "events": [
+                "BEFORE UPDATE"
+            ],
+            "orientation": "ROW",
+            "enabled": true
+        },
+        {
+            "trigger_name": "update_usage_metrics_updated_at",
+            "table": "usage_metrics",
+            "function": "update_updated_at_column",
+            "events": [
+                "BEFORE UPDATE"
+            ],
+            "orientation": "ROW",
+            "enabled": true
+        },
+        {
+            "trigger_name": "message_sequence_trigger",
+            "table": "messages",
+            "function": "maintain_message_sequence",
+            "events": [
+                "BEFORE INSERT"
+            ],
+            "orientation": "ROW",
+            "enabled": true
+        }
+    ],
+    "enums": [
+        {
+            "name": "subscription_tier_type",
+            "schema": "public",
+            "values": [
+                "free",
+                "pro"
+            ]
+        }
+    ],
+    "indexes": [
+        {
+            "table": "users",
+            "index_name": "idx_users_phone_number",
+            "columns": [
+                "phone_number"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_users_phone_number ON public.users USING btree (phone_number)"
+        },
+        {
+            "table": "users",
+            "index_name": "idx_users_subscription",
+            "columns": [
+                "is_subscribed",
+                "subscription_tier"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_users_subscription ON public.users USING btree (is_subscribed, subscription_tier)"
+        },
+        {
+            "table": "users",
+            "index_name": "users_phone_number_key",
+            "columns": [
+                "phone_number"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX users_phone_number_key ON public.users USING btree (phone_number)"
+        },
+        {
+            "table": "users",
+            "index_name": "users_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX users_pkey ON auth.users USING btree (id)"
+        },
+        {
+            "table": "messages",
+            "index_name": "idx_messages_content",
+            "columns": [
+                null
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_messages_content ON public.messages USING gin (to_tsvector('english'::regconfig, content))"
+        },
+        {
+            "table": "messages",
+            "index_name": "idx_messages_phone_created",
+            "columns": [
+                "phone_number",
+                "created_at"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_messages_phone_created ON public.messages USING btree (phone_number, created_at DESC)"
+        },
+        {
+            "table": "messages",
+            "index_name": "idx_messages_phone_sequence",
+            "columns": [
+                "phone_number",
+                "sequence_number"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_messages_phone_sequence ON public.messages USING btree (phone_number, sequence_number)"
+        },
+        {
+            "table": "messages",
+            "index_name": "idx_messages_role",
+            "columns": [
+                "role",
+                "phone_number"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_messages_role ON public.messages USING btree (role, phone_number)"
+        },
+        {
+            "table": "messages",
+            "index_name": "messages_phone_number_sequence_number_key",
+            "columns": [
+                "phone_number",
+                "sequence_number"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX messages_phone_number_sequence_number_key ON public.messages USING btree (phone_number, sequence_number)"
+        },
+        {
+            "table": "messages",
+            "index_name": "messages_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX messages_pkey ON ONLY realtime.messages USING btree (id, inserted_at)"
+        },
+        {
+            "table": "image_analysis",
+            "index_name": "idx_image_analysis_created",
+            "columns": [
+                "created_at"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_image_analysis_created ON public.image_analysis USING btree (created_at DESC)"
+        },
+        {
+            "table": "image_analysis",
+            "index_name": "idx_image_analysis_phone_number",
+            "columns": [
+                "phone_number"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_image_analysis_phone_number ON public.image_analysis USING btree (phone_number)"
+        },
+        {
+            "table": "image_analysis",
+            "index_name": "idx_image_analysis_status",
+            "columns": [
+                "status"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_image_analysis_status ON public.image_analysis USING btree (status)"
+        },
+        {
+            "table": "image_analysis",
+            "index_name": "image_analysis_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX image_analysis_pkey ON public.image_analysis USING btree (id)"
+        },
+        {
+            "table": "credits_transactions",
+            "index_name": "idx_credits_transactions_phone",
+            "columns": [
+                "phone_number",
+                "created_at"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_credits_transactions_phone ON public.credits_transactions USING btree (phone_number, created_at DESC)"
+        },
+        {
+            "table": "credits_transactions",
+            "index_name": "idx_credits_transactions_type",
+            "columns": [
+                "transaction_type"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_credits_transactions_type ON public.credits_transactions USING btree (transaction_type)"
+        },
+        {
+            "table": "credits_transactions",
+            "index_name": "credits_transactions_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX credits_transactions_pkey ON public.credits_transactions USING btree (id)"
+        },
+        {
+            "table": "subscription_logs",
+            "index_name": "idx_subscription_logs_phone",
+            "columns": [
+                "phone_number",
+                "created_at"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_subscription_logs_phone ON public.subscription_logs USING btree (phone_number, created_at DESC)"
+        },
+        {
+            "table": "subscription_logs",
+            "index_name": "subscription_logs_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX subscription_logs_pkey ON public.subscription_logs USING btree (id)"
+        },
+        {
+            "table": "error_logs",
+            "index_name": "idx_error_logs_phone",
+            "columns": [
+                "phone_number"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_error_logs_phone ON public.error_logs USING btree (phone_number)"
+        },
+        {
+            "table": "error_logs",
+            "index_name": "idx_error_logs_type",
+            "columns": [
+                "error_type"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_error_logs_type ON public.error_logs USING btree (error_type)"
+        },
+        {
+            "table": "error_logs",
+            "index_name": "error_logs_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX error_logs_pkey ON public.error_logs USING btree (id)"
+        },
+        {
+            "table": "locks",
+            "index_name": "idx_locks_expiry",
+            "columns": [
+                "expires_at"
+            ],
+            "unique": false,
+            "definition": "CREATE INDEX idx_locks_expiry ON public.locks USING btree (expires_at)"
+        },
+        {
+            "table": "locks",
+            "index_name": "locks_resource_type_resource_id_key",
+            "columns": [
+                "resource_type",
+                "resource_id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX locks_resource_type_resource_id_key ON public.locks USING btree (resource_type, resource_id)"
+        },
+        {
+            "table": "locks",
+            "index_name": "locks_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX locks_pkey ON public.locks USING btree (id)"
+        },
+        {
+            "table": "usage_metrics",
+            "index_name": "idx_usage_metrics_user_month",
+            "columns": [
+                "phone_number",
+                "month_year"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX idx_usage_metrics_user_month ON public.usage_metrics USING btree (phone_number, month_year)"
+        },
+        {
+            "table": "usage_metrics",
+            "index_name": "usage_metrics_pkey",
+            "columns": [
+                "id"
+            ],
+            "unique": true,
+            "definition": "CREATE UNIQUE INDEX usage_metrics_pkey ON public.usage_metrics USING btree (id)"
+        }
+    ]
+}
