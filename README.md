@@ -24,7 +24,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Create a `.env.local` file in the root directory with your Supabase database credentials:
+4. Create a `.env` file in the root directory with your Supabase database credentials:
 ```env
 DB_PASSWORD=your_password
 DB_HOST=your_project_ref.supabase.co
