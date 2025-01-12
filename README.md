@@ -52,6 +52,81 @@ The generated JSON file includes:
 - Enumerated types
 - Indexes
 
+### Example Output
+
+```json
+{
+    "tables": [
+        {
+            "table_name": "products",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "INTEGER",
+                    "is_nullable": false,
+                    "default": "nextval('products_id_seq'::regclass)",
+                    "is_primary_key": true,
+                    "is_unique": true,
+                    "check_constraints": []
+                },
+                {
+                    "name": "name",
+                    "type": "VARCHAR(100)",
+                    "is_nullable": false,
+                    "default": null,
+                    "is_primary_key": false,
+                    "is_unique": false,
+                    "check_constraints": ["length(name) > 0"]
+                }
+            ]
+        }
+    ],
+    "foreign_keys": [
+        {
+            "table": "orders",
+            "constrained_columns": ["product_id"],
+            "referred_table": "products",
+            "referred_columns": ["id"]
+        }
+    ],
+    "functions": [
+        {
+            "function_name": "calculate_total",
+            "schema": "public",
+            "arguments": "order_id integer",
+            "return_type": "numeric",
+            "definition": "BEGIN\n    RETURN (SELECT SUM(quantity * price) FROM order_items WHERE order_id = $1);\nEND;"
+        }
+    ],
+    "triggers": [
+        {
+            "trigger_name": "update_stock_trigger",
+            "table": "orders",
+            "function": "update_product_stock",
+            "events": ["AFTER INSERT"],
+            "orientation": "ROW",
+            "enabled": true
+        }
+    ],
+    "enums": [
+        {
+            "name": "order_status",
+            "schema": "public",
+            "values": ["pending", "processing", "completed", "cancelled"]
+        }
+    ],
+    "indexes": [
+        {
+            "table": "products",
+            "index_name": "idx_products_name",
+            "columns": ["name"],
+            "unique": false,
+            "definition": "CREATE INDEX idx_products_name ON public.products USING btree (name)"
+        }
+    ]
+}
+```
+
 ## Note
 
-Make sure to add `.env.local` to your `.gitignore` to keep your credentials secure. 
+Make sure to add `.env` to your `.gitignore` to keep your credentials secure. 
