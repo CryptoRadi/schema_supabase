@@ -1,3 +1,18 @@
-.env.local
-database_metadata.json
+# Environment
 .env
+.env.local
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Generated files
+database_metadata.json
+database_schema.md

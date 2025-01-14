@@ -242,8 +242,80 @@ with engine.connect() as connection:
             "definition": definition
         })
 
+def convert_to_markdown(database_metadata):
+    """Convert the database metadata to markdown format."""
+    md = ["# Database Schema Documentation\n\n"]
+    
+    # Tables
+    md.append("## Tables\n\n")
+    for table in database_metadata["tables"]:
+        md.append(f"### {table['table_name']}\n\n")
+        md.append("| Column | Type | Nullable | Default | Primary Key | Unique | Constraints |\n")
+        md.append("|--------|------|----------|----------|-------------|---------|-------------|\n")
+        for col in table["columns"]:
+            constraints = ", ".join(col["check_constraints"]) if col["check_constraints"] else "-"
+            md.append(f"| {col['name']} | {col['type']} | {col['is_nullable']} | {col['default'] or '-'} | {col['is_primary_key']} | {col['is_unique']} | {constraints} |\n")
+        md.append("\n")
+    
+    # Foreign Keys
+    md.append("## Foreign Key Relationships\n\n")
+    for fk in database_metadata["foreign_keys"]:
+        md.append(f"- `{fk['table']}.{', '.join(fk['constrained_columns'])}` → ")
+        md.append(f"`{fk['referred_table']}.{', '.join(fk['referred_columns'])}`\n")
+    md.append("\n")
+    
+    # Functions
+    md.append("## Database Functions\n\n")
+    for func in database_metadata["functions"]:
+        md.append(f"### {func['function_name']}\n")
+        md.append("```yaml\n")
+        md.append(f"Schema: {func['schema']}\n")
+        md.append(f"Arguments: {func['arguments']}\n")
+        md.append(f"Returns: {func['return_type']}\n")
+        md.append("```\n")
+        md.append("Definition:\n")
+        md.append("```sql\n" + func['definition'] + "\n```\n\n")
+    
+    # Triggers
+    md.append("## Triggers\n\n")
+    for trigger in database_metadata["triggers"]:
+        md.append(f"### {trigger['trigger_name']}\n")
+        md.append("```yaml\n")
+        md.append(f"Table: {trigger['table']}\n")
+        md.append(f"Function: {trigger['function']}\n")
+        md.append(f"Events: {', '.join(trigger['events'])}\n")
+        md.append(f"Orientation: {trigger['orientation']}\n")
+        md.append(f"Enabled: {trigger['enabled']}\n")
+        md.append("```\n\n")
+    
+    # Enums
+    md.append("## Enumerated Types\n\n")
+    for enum in database_metadata["enums"]:
+        md.append(f"### {enum['name']}\n")
+        md.append(f"- Schema: `{enum['schema']}`\n")
+        md.append(f"- Values: `{', '.join(enum['values'])}`\n\n")
+    
+    # Indexes
+    md.append("## Indexes\n\n")
+    for idx in database_metadata["indexes"]:
+        md.append(f"### {idx['index_name']}\n")
+        md.append(f"- Table: `{idx['table']}`\n")
+        columns = [str(col) for col in idx['columns'] if col is not None]
+        md.append(f"- Columns: `{', '.join(columns) if columns else 'N/A'}`\n")
+        md.append(f"- Unique: `{idx['unique']}`\n")
+        if idx['definition']:
+            md.append("```sql\n" + idx['definition'] + "\n```\n")
+        md.append("\n")
+    
+    return "".join(md)
+
 # Export metadata to JSON
-with open("database_metadata.json", "w") as json_file:
+with open("database_metadata.json", "w", encoding="utf-8") as json_file:
     json.dump(database_metadata, json_file, indent=4)
 
-print("Database metadata exported to 'database_metadata.json'")
+# Generate markdown version
+markdown_content = convert_to_markdown(database_metadata)
+with open("database_schema.md", "w", encoding="utf-8") as md_file:
+    md_file.write(markdown_content)
+
+print("Database metadata exported to 'database_metadata.json' and 'database_schema.md'")
